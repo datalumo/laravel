@@ -151,16 +151,6 @@ trait Searchable
     }
 
     /**
-     * Tags to attach to the Datalumo entry.
-     *
-     * @return string[]|null
-     */
-    public function toSearchableTags(): ?array
-    {
-        return null;
-    }
-
-    /**
      * The source URL for the Datalumo entry.
      */
     public function toSearchableSourceUrl(): ?string

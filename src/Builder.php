@@ -14,7 +14,7 @@ class Builder
 {
     public ?float $threshold = null;
 
-    public ?array $tags = null;
+    public ?array $meta = null;
 
     public function __construct(
         public readonly Model $model,
@@ -33,13 +33,11 @@ class Builder
     }
 
     /**
-     * Filter results by tags.
-     *
-     * @param string|string[] $tags
+     * Filter results by metadata key-value pairs.
      */
-    public function tags(string|array $tags): static
+    public function meta(array $meta): static
     {
-        $this->tags = is_array($tags) ? $tags : [$tags];
+        $this->meta = $meta;
 
         return $this;
     }

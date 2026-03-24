@@ -84,11 +84,6 @@ public function toSearchableMeta(): ?array
     return ['author' => $this->author->name];
 }
 
-public function toSearchableTags(): ?array
-{
-    return $this->tags->pluck('name')->all();
-}
-
 public function toSearchableSourceUrl(): ?string
 {
     return route('articles.show', $this);
@@ -142,7 +137,7 @@ $articles = Article::search('machine learning')->paginate(15);
 ```php
 $articles = Article::search('transformers')
     ->threshold(0.3)
-    ->tags(['ai'])
+    ->meta(['category' => 'ai'])
     ->paginate(10);
 ```
 

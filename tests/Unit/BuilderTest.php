@@ -28,20 +28,12 @@ it('sets threshold fluently', function () {
         ->and($builder->threshold)->toBe(0.5);
 });
 
-it('sets tags from string', function () {
+it('sets meta from array', function () {
     $builder = new Builder($this->model, 'test', $this->engine);
 
-    $builder->tags('php');
+    $builder->meta(['author' => 'John']);
 
-    expect($builder->tags)->toBe(['php']);
-});
-
-it('sets tags from array', function () {
-    $builder = new Builder($this->model, 'test', $this->engine);
-
-    $builder->tags(['php', 'laravel']);
-
-    expect($builder->tags)->toBe(['php', 'laravel']);
+    expect($builder->meta)->toBe(['author' => 'John']);
 });
 
 it('calls engine search and maps to models via get()', function () {
@@ -62,7 +54,7 @@ it('returns raw results without model mapping', function () {
 
     $entry = new Entry(
         id: 'e-1', collectionId: 'c-1', title: 'T', rawText: 'text',
-        meta: null, tags: [], sourceUrl: null, sourceType: 'articles',
+        meta: null, sourceUrl: null, sourceType: 'articles',
         sourceId: '1', createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z',
     );
 
@@ -107,12 +99,12 @@ it('delegates chat to engine', function () {
     expect($result)->toBe($chat);
 });
 
-it('chains threshold and tags fluently', function () {
+it('chains threshold and meta fluently', function () {
     $builder = new Builder($this->model, 'test', $this->engine);
 
-    $result = $builder->threshold(0.4)->tags(['php', 'laravel']);
+    $result = $builder->threshold(0.4)->meta(['author' => 'John']);
 
     expect($result)->toBe($builder)
         ->and($builder->threshold)->toBe(0.4)
-        ->and($builder->tags)->toBe(['php', 'laravel']);
+        ->and($builder->meta)->toBe(['author' => 'John']);
 });

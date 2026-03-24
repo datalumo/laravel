@@ -30,7 +30,6 @@ class Engine
                 'raw_text' => $model->toSearchableText(),
                 'title' => $model->toSearchableTitle(),
                 'meta' => $model->toSearchableMeta(),
-                'tags' => $model->toSearchableTags(),
                 'source_url' => $model->toSearchableSourceUrl(),
                 'source_type' => $model->searchableSourceType(),
                 'source_id' => (string) $model->getScoutKey(),
@@ -161,7 +160,7 @@ class Engine
         return array_filter([
             'query' => $builder->query,
             'threshold' => $builder->threshold,
-            'tags' => $builder->tags,
+            'meta' => $builder->meta,
         ]);
     }
 }

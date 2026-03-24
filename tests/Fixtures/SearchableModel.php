@@ -27,11 +27,6 @@ class SearchableModel extends Model
         return $this->title;
     }
 
-    public function toSearchableTags(): ?array
-    {
-        return $this->tags ?? null;
-    }
-
     public function toSearchableSourceUrl(): ?string
     {
         return 'https://example.com/articles/'.$this->id;

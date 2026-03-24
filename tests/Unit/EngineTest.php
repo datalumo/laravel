@@ -75,11 +75,11 @@ it('performs a search via integration', function () {
     $model = new SearchableModel;
     $builder = new Builder($model, 'test query', $this->engine);
     $builder->threshold(0.3);
-    $builder->tags(['php']);
+    $builder->meta(['category' => 'php']);
 
     $integrationResource = Mockery::mock(IntegrationResource::class);
     $integrationResource->shouldReceive('search')
-        ->with('int-test-456', ['query' => 'test query', 'threshold' => 0.3, 'tags' => ['php']])
+        ->with('int-test-456', ['query' => 'test query', 'threshold' => 0.3, 'meta' => ['category' => 'php']])
         ->once()
         ->andReturn(new SearchResult(
             data: [],
@@ -222,7 +222,7 @@ it('maps results to eloquent models', function () {
         title: 'Found',
         rawText: 'Content',
         meta: null,
-        tags: [],
+
         sourceUrl: null,
         sourceType: 'articles',
         sourceId: '1',
