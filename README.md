@@ -1,11 +1,11 @@
-# Datalumo for Laravel
+# datalumo for Laravel
 
-A Scout-inspired Laravel integration for [Datalumo](https://datalumo.com). Automatically sync your Eloquent models to Datalumo collections and search them with a fluent API.
+A Scout-inspired Laravel integration for [datalumo](https://datalumo.app). Automatically sync your Eloquent models to Datalumo collections and search them via integrations with a fluent API.
 
 ## Requirements
 
 - PHP 8.2+
-- Laravel 11 or 12
+- Laravel 11, 12, or 13
 
 ## Installation
 
@@ -32,7 +32,7 @@ The published config file (`config/datalumo.php`) includes:
 ```php
 return [
     'token' => env('DATALUMO_TOKEN', ''),
-    'url' => env('DATALUMO_URL', 'https://datalumo.com'),
+    'url' => env('DATALUMO_URL', 'https://datalumo.app'),
     'queue' => env('DATALUMO_QUEUE', true),
     'queue_connection' => env('DATALUMO_QUEUE_CONNECTION'),
     'queue_name' => env('DATALUMO_QUEUE_NAME'),
@@ -42,7 +42,7 @@ return [
 
 By default, indexing operations are queued. Set `DATALUMO_QUEUE=false` to sync synchronously.
 
-## Making Models Searchable
+## Making models searchable
 
 Add the `Searchable` trait to your Eloquent model and implement `toSearchableText()`:
 
@@ -55,6 +55,7 @@ class Article extends Model
     use Searchable;
 
     protected string $datalumoCollectionId = 'your-collection-uuid';
+    protected string $datalumoIntegrationId = 'your-integration-uuid';
 
     public function toSearchableText(): string
     {
@@ -63,52 +64,40 @@ class Article extends Model
 }
 ```
 
-The `$datalumoCollectionId` property must reference an existing collection in your Datalumo account. The `toSearchableText()` method defines the content that gets indexed and searched.
+The model requires two properties:
 
-### Customising What Gets Indexed
+- `$datalumoCollectionId` — the collection where entries are synced to (data management)
+- `$datalumoIntegrationId` — the integration used for search, summarise, and chat
+
+### Customising what gets indexed
 
 Override these optional methods to enrich your entries:
 
 ```php
-class Article extends Model
+public function toSearchableTitle(): ?string
 {
-    use Searchable;
+    return $this->title;
+}
 
-    protected string $datalumoCollectionId = 'your-collection-uuid';
+public function toSearchableMeta(): ?array
+{
+    return ['author' => $this->author->name];
+}
 
-    public function toSearchableText(): string
-    {
-        return $this->title . "\n\n" . $this->body;
-    }
+public function toSearchableTags(): ?array
+{
+    return $this->tags->pluck('name')->all();
+}
 
-    public function toSearchableTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function toSearchableMeta(): ?array
-    {
-        return [
-            'author' => $this->author->name,
-            'published_at' => $this->published_at->toIso8601String(),
-        ];
-    }
-
-    public function toSearchableTags(): ?array
-    {
-        return $this->tags->pluck('name')->all();
-    }
-
-    public function toSearchableSourceUrl(): ?string
-    {
-        return route('articles.show', $this);
-    }
+public function toSearchableSourceUrl(): ?string
+{
+    return route('articles.show', $this);
 }
 ```
 
-### Conditional Indexing
+### Conditional indexing
 
-Control which models get indexed by overriding `shouldBeSearchable()`:
+Control which models get indexed:
 
 ```php
 public function shouldBeSearchable(): bool
@@ -119,64 +108,28 @@ public function shouldBeSearchable(): bool
 
 Models that return `false` are automatically removed from Datalumo if they were previously indexed.
 
-### Custom Source Type and Key
+## Automatic syncing
 
-By default, the table name is used as `source_type` and the primary key as the identifier. Override if needed:
+Once a model uses the `Searchable` trait, it automatically syncs to Datalumo on create, update, delete, soft delete, and restore.
 
-```php
-public function searchableSourceType(): string
-{
-    return 'blog_posts';
-}
-
-public function getScoutKey(): mixed
-{
-    return $this->uuid;
-}
-
-public function getScoutKeyName(): string
-{
-    return 'uuid';
-}
-```
-
-## Automatic Syncing
-
-Once a model uses the `Searchable` trait, it automatically syncs to Datalumo on:
-
-- **Create** — indexed immediately (or queued)
-- **Update** — re-indexed with new content
-- **Delete** — removed from Datalumo
-- **Soft Delete** — respects `shouldBeSearchable()` (removed if false)
-- **Restore** — re-indexed
-
-All sync operations use batch upsert under the hood via `source_type` and `source_id`.
-
-### Manual Syncing
+### Manual syncing
 
 ```php
-// Index a single model
 $article->searchable();
-
-// Remove a single model
 $article->unsearchable();
 
-// Index a collection of models
 Article::where('is_published', true)->get()->searchable();
-
-// Remove a collection of models
-Article::where('is_draft', true)->get()->unsearchable();
 ```
 
 ## Searching
 
-### Basic Search
+### Basic search
 
 ```php
 $articles = Article::search('machine learning')->get();
 ```
 
-This returns an Eloquent Collection of `Article` models, matched by semantic search in your Datalumo collection.
+Returns an Eloquent Collection of matching models, searched via the integration.
 
 ### Pagination
 
@@ -184,34 +137,7 @@ This returns an Eloquent Collection of `Article` models, matched by semantic sea
 $articles = Article::search('machine learning')->paginate(15);
 ```
 
-Returns a standard Laravel `LengthAwarePaginator`, compatible with Blade and API responses.
-
-### Similarity Threshold
-
-Control how strict the matching is (0 = match everything, 1 = exact match):
-
-```php
-$articles = Article::search('machine learning')
-    ->threshold(0.4)
-    ->get();
-```
-
-### Filter by Tags
-
-```php
-$articles = Article::search('machine learning')
-    ->tags(['ai', 'research'])
-    ->get();
-
-// Single tag
-$articles = Article::search('machine learning')
-    ->tags('ai')
-    ->get();
-```
-
-### Chaining
-
-All builder methods are fluent:
+### Fluent options
 
 ```php
 $articles = Article::search('transformers')
@@ -220,81 +146,139 @@ $articles = Article::search('transformers')
     ->paginate(10);
 ```
 
-### Raw Results
+### Raw results
 
 Get the raw Datalumo `Entry` objects without mapping to Eloquent models:
 
 ```php
 $entries = Article::search('machine learning')->raw();
-
-foreach ($entries as $entry) {
-    echo $entry->title;
-    echo $entry->rawText;
-    echo $entry->sourceId;
-}
 ```
 
-## AI Features
+## AI features
 
 ### Summarise
-
-Get an AI-generated summary of search results:
 
 ```php
 $summary = Article::search('explain machine learning')->summarise();
 
-echo $summary->summary;       // Markdown summary
-echo $summary->references;    // Source references
-echo $summary->data;          // Matched Entry objects
-
-// With format and locale
-$summary = Article::search('explain machine learning')
-    ->summarise(format: 'html', locale: 'nl');
+echo $summary->summary;
+echo $summary->references;
 ```
 
 ### Chat
 
-Have a conversation grounded in your collection's content:
-
 ```php
 $response = Article::search('What is machine learning?')->chat();
 
-echo $response->message;          // AI response
-echo $response->conversationId;   // Use to continue the conversation
-```
+echo $response->message;
+echo $response->conversationId;
 
-Continue an existing conversation:
-
-```php
+// Continue the conversation
 $followUp = Article::search('What about deep learning?')
     ->chat($response->conversationId);
 ```
 
-## Artisan Commands
+## Streaming
+
+The summarise and chat methods have streaming variants that return text chunks as they are generated:
+
+```php
+$stream = Article::search('What is your refund policy?')->streamChat();
+
+foreach ($stream->text() as $chunk) {
+    echo $chunk;
+    flush();
+}
+```
+
+```php
+$stream = Article::search('explain this')->streamSummarise();
+
+foreach ($stream->text() as $chunk) {
+    echo $chunk;
+    flush();
+}
+```
+
+Get the full text at once:
+
+```php
+$stream = Article::search('hello')->streamChat();
+$fullResponse = $stream->fullText();
+```
+
+Use with Laravel's streaming response:
+
+```php
+Route::get('/chat', function () {
+    $stream = Article::search(request('message'))->streamChat();
+
+    return response()->stream(function () use ($stream) {
+        foreach ($stream->text() as $chunk) {
+            echo $chunk;
+            ob_flush();
+            flush();
+        }
+    }, 200, ['Content-Type' => 'text/plain']);
+});
+```
+
+## Blade components
+
+Embed Datalumo widgets directly in your views:
+
+### Chatbot
+
+```blade
+<x-datalumo::chatbot id="your-integration-id" />
+```
+
+### Search box
+
+```blade
+<x-datalumo::search id="your-integration-id" />
+```
+
+With a custom target and form:
+
+```blade
+<x-datalumo::search
+    id="your-integration-id"
+    form="#my-form"
+    input="#my-input"
+    target="#results"
+/>
+```
+
+### Search modal
+
+Opens with `Ctrl+K` / `Cmd+K`:
+
+```blade
+<x-datalumo::search-modal id="your-integration-id" />
+```
+
+Publish views to customise:
+
+```bash
+php artisan vendor:publish --tag=datalumo-views
+```
+
+## Artisan commands
 
 ### Import
-
-Bulk import all existing models into Datalumo:
 
 ```bash
 php artisan datalumo:import "App\Models\Article"
 ```
 
-This processes models in chunks (default 50, configurable via `datalumo.chunk_size`) and respects `shouldBeSearchable()`.
-
 ### Flush
-
-Remove all models of a type from Datalumo:
 
 ```bash
 php artisan datalumo:flush "App\Models\Article"
 ```
 
-This will ask for confirmation before proceeding.
-
-## Queue Configuration
-
-By default, all indexing operations are dispatched to the queue. Configure the connection and queue name via environment variables:
+## Queue configuration
 
 ```env
 DATALUMO_QUEUE=true
@@ -302,15 +286,11 @@ DATALUMO_QUEUE_CONNECTION=redis
 DATALUMO_QUEUE_NAME=indexing
 ```
 
-Set `DATALUMO_QUEUE=false` for synchronous indexing (useful during development).
+Set `DATALUMO_QUEUE=false` for synchronous indexing during development.
 
 ## Testing
 
-```bash
-composer test
-```
-
-In your application tests, you can mock the `Engine` to prevent actual API calls:
+In your tests, mock the `Engine` to prevent API calls:
 
 ```php
 use Datalumo\Laravel\Engine;
