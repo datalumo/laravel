@@ -24,7 +24,7 @@ return [
     |
     */
 
-    'url' => env('DATALUMO_URL', 'https://datalumo.com'),
+    'url' => env('DATALUMO_URL', 'https://datalumo.app'),
 
     /*
     |--------------------------------------------------------------------------

@@ -1,6 +1,6 @@
-<script src="{{ rtrim(config('datalumo.url', 'https://datalumo.com'), '/') }}/embed/datalumo.js"></script>
+<script src="{{ rtrim(config('datalumo.url', 'https://datalumo.app'), '/') }}/embed/datalumo.js"></script>
 <script>
     Datalumo.searchModal('{{ $id }}', {
-        baseUrl: '{{ rtrim(config('datalumo.url', 'https://datalumo.com'), '/') }}'
+        baseUrl: '{{ rtrim(config('datalumo.url', 'https://datalumo.app'), '/') }}'
     });
 </script>
