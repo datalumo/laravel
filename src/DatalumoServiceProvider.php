@@ -5,6 +5,7 @@ namespace Datalumo\Laravel;
 use Datalumo\Laravel\Console\ImportCommand;
 use Datalumo\Laravel\Console\FlushCommand;
 use Datalumo\PhpSdk\Datalumo;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class DatalumoServiceProvider extends ServiceProvider
@@ -28,6 +29,8 @@ class DatalumoServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'datalumo');
+
+        Blade::anonymousComponentPath(__DIR__.'/../resources/views/components', 'datalumo');
 
         $this->publishes([
             __DIR__.'/../config/datalumo.php' => config_path('datalumo.php'),

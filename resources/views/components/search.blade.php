@@ -1,9 +1,11 @@
+@props(['id', 'target' => null, 'form' => null, 'input' => null])
+
 <script src="{{ rtrim(config('datalumo.url', 'https://datalumo.app'), '/') }}/embed/datalumo.js"></script>
 <script>
-    Datalumo.searchBox('{{ $id }}', {
-        baseUrl: '{{ rtrim(config('datalumo.url', 'https://datalumo.app'), '/') }}'@if(!empty($target)),
-        target: '{{ $target }}'@endif@if(!empty($form)),
-        form: '{{ $form }}'@endif@if(!empty($input)),
-        input: '{{ $input }}'@endif
-    });
+    Datalumo.searchBox('{{ $id }}', {!! json_encode(array_filter([
+        'baseUrl' => rtrim(config('datalumo.url', 'https://datalumo.app'), '/'),
+        'target' => $target,
+        'form' => $form,
+        'input' => $input,
+    ])) !!});
 </script>
