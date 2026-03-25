@@ -253,6 +253,12 @@ Opens with `Ctrl+K` / `Cmd+K`:
 <x-datalumo::search-modal id="your-integration-id" />
 ```
 
+With a custom target to control where the modal is rendered:
+
+```blade
+<x-datalumo::search-modal id="your-integration-id" target="#search-modal" />
+```
+
 Publish views to customise:
 
 ```bash

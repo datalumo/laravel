@@ -29,6 +29,14 @@ it('renders the search-modal component', function () {
         ->toContain("Datalumo.searchModal('test-integration'");
 });
 
+it('renders the search-modal component with target', function () {
+    $html = Blade::render('<x-datalumo::search-modal id="test-integration" target="#modal-container" />');
+
+    expect($html)
+        ->toContain("Datalumo.searchModal('test-integration'")
+        ->toContain('"target":"#modal-container"');
+});
+
 it('renders the chatbot component', function () {
     $html = Blade::render('<x-datalumo::chatbot id="test-integration" />');
 
