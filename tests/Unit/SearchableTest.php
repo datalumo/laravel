@@ -58,6 +58,12 @@ it('returns null for default optional methods', function () {
     expect($model->toSearchableMeta())->toBeNull();
 });
 
+it('returns null for default toSearchableSearchableMeta', function () {
+    $model = new SearchableModel;
+
+    expect($model->toSearchableSearchableMeta())->toBeNull();
+});
+
 it('reports shouldBeSearchable as true by default', function () {
     $model = new SearchableModel;
 

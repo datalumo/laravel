@@ -30,6 +30,7 @@ class Engine
                 'raw_text' => $model->toSearchableText(),
                 'title' => $model->toSearchableTitle(),
                 'meta' => $model->toSearchableMeta(),
+                'searchable_meta' => $model->toSearchableSearchableMeta(),
                 'source_url' => $model->toSearchableSourceUrl(),
                 'source_type' => $model->searchableSourceType(),
                 'source_id' => (string) $model->getScoutKey(),

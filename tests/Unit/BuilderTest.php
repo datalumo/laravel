@@ -54,7 +54,7 @@ it('returns raw results without model mapping', function () {
 
     $entry = new Entry(
         id: 'e-1', collectionId: 'c-1', title: 'T', rawText: 'text',
-        meta: null, sourceUrl: null, sourceType: 'articles',
+        meta: null, searchableMeta: null, sourceUrl: null, sourceType: 'articles',
         sourceId: '1', createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z',
     );
 

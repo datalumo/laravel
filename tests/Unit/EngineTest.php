@@ -41,6 +41,59 @@ it('updates models via batch upsert', function () {
     $this->engine->update($models);
 });
 
+it('includes searchable_meta in upsert payload when provided', function () {
+    $model = Mockery::mock(SearchableModel::class)->makePartial();
+    $model->shouldReceive('getKey')->andReturn(1);
+    $model->shouldReceive('getScoutKey')->andReturn(1);
+    $model->shouldReceive('toSearchableText')->andReturn('Content');
+    $model->shouldReceive('toSearchableTitle')->andReturn('Test');
+    $model->shouldReceive('toSearchableMeta')->andReturn(null);
+    $model->shouldReceive('toSearchableSearchableMeta')->andReturn(['color' => 'red', 'size' => 'large']);
+    $model->shouldReceive('toSearchableSourceUrl')->andReturn(null);
+    $model->shouldReceive('searchableSourceType')->andReturn('articles');
+    $model->shouldReceive('searchableCollectionId')->andReturn('col-test-123');
+
+    $models = new \Illuminate\Database\Eloquent\Collection([$model]);
+
+    $entryResource = Mockery::mock(\Datalumo\PhpSdk\Resources\EntryResource::class);
+    $entryResource->shouldReceive('batchUpsert')
+        ->once()
+        ->withArgs(function (array $entries) {
+            return count($entries) === 1
+                && $entries[0]['searchable_meta'] === ['color' => 'red', 'size' => 'large'];
+        })
+        ->andReturn(['created' => 1, 'updated' => 0]);
+
+    $this->datalumo->shouldReceive('entries')
+        ->with('col-test-123')
+        ->once()
+        ->andReturn($entryResource);
+
+    $this->engine->update($models);
+});
+
+it('excludes searchable_meta from upsert payload when null', function () {
+    $model = new SearchableModel(['id' => 1, 'title' => 'Test', 'body' => 'Content']);
+    $model->exists = true;
+    $models = new \Illuminate\Database\Eloquent\Collection([$model]);
+
+    $entryResource = Mockery::mock(\Datalumo\PhpSdk\Resources\EntryResource::class);
+    $entryResource->shouldReceive('batchUpsert')
+        ->once()
+        ->withArgs(function (array $entries) {
+            return count($entries) === 1
+                && ! array_key_exists('searchable_meta', $entries[0]);
+        })
+        ->andReturn(['created' => 1, 'updated' => 0]);
+
+    $this->datalumo->shouldReceive('entries')
+        ->with('col-test-123')
+        ->once()
+        ->andReturn($entryResource);
+
+    $this->engine->update($models);
+});
+
 it('skips update for empty collection', function () {
     $this->datalumo->shouldNotReceive('entries');
 
@@ -222,7 +275,7 @@ it('maps results to eloquent models', function () {
         title: 'Found',
         rawText: 'Content',
         meta: null,
-
+        searchableMeta: null,
         sourceUrl: null,
         sourceType: 'articles',
         sourceId: '1',

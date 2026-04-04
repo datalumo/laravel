@@ -151,6 +151,14 @@ trait Searchable
     }
 
     /**
+     * Searchable metadata to attach to the Datalumo entry.
+     */
+    public function toSearchableSearchableMeta(): ?array
+    {
+        return null;
+    }
+
+    /**
      * The source URL for the Datalumo entry.
      */
     public function toSearchableSourceUrl(): ?string
