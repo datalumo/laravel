@@ -85,14 +85,10 @@ class ReconcileCommand extends Command
         $page = 1;
 
         do {
-            $response = $datalumo->entries($collectionId)->list($page);
+            $response = $datalumo->entries($collectionId)->list($page, $sourceType);
 
             foreach ($response->data as $entry) {
                 /** @var Entry $entry */
-                if ($entry->sourceType !== $sourceType) {
-                    continue;
-                }
-
                 if (isset($kept[$entry->sourceId])) {
                     continue;
                 }
