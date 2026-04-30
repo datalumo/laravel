@@ -2,8 +2,9 @@
 
 namespace Datalumo\Laravel;
 
-use Datalumo\Laravel\Console\ImportCommand;
 use Datalumo\Laravel\Console\FlushCommand;
+use Datalumo\Laravel\Console\ImportCommand;
+use Datalumo\Laravel\Console\ReconcileCommand;
 use Datalumo\PhpSdk\Datalumo;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -44,6 +45,7 @@ class DatalumoServiceProvider extends ServiceProvider
             $this->commands([
                 ImportCommand::class,
                 FlushCommand::class,
+                ReconcileCommand::class,
             ]);
         }
     }

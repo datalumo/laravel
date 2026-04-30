@@ -167,6 +167,25 @@ trait Searchable
     }
 
     /**
+     * A deterministic hash of the searchable representation.
+     *
+     * Used by `datalumo:reconcile` to skip unchanged rows. Override to
+     * include or exclude additional fields.
+     */
+    public function searchableHash(): string
+    {
+        return md5(serialize([
+            $this->toSearchableText(),
+            $this->toSearchableTitle(),
+            $this->toSearchableMeta(),
+            $this->toSearchableSearchableMeta(),
+            $this->toSearchableSourceUrl(),
+            $this->searchableSourceType(),
+            (string) $this->getScoutKey(),
+        ]));
+    }
+
+    /**
      * Determine if the model should be searchable.
      */
     public function shouldBeSearchable(): bool
