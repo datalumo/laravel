@@ -1,0 +1,77 @@
+{
+    "name": "datalumo/laravel",
+    "description": "Laravel integration for Datalumo — Scout-inspired searchable models",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "datalumo",
+        "laravel",
+        "search",
+        "scout"
+    ],
+    "authors": [
+        {
+            "name": "Datalumo",
+            "homepage": "https://datalumo.app"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "datalumo/php": "@dev",
+        "illuminate/bus": "^11.0|^12.0",
+        "illuminate/console": "^11.0|^12.0",
+        "illuminate/contracts": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/queue": "^11.0|^12.0",
+        "illuminate/support": "^11.0|^12.0",
+        "illuminate/view": "^11.0|^12.0",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.18",
+        "orchestra/testbench": "^9.0|^10.0",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Datalumo\\Laravel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Datalumo\\Laravel\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Datalumo\\Laravel\\DatalumoServiceProvider"
+            ],
+            "aliases": {
+                "Datalumo": "Datalumo\\Laravel\\Facades\\Datalumo"
+            }
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../php",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "scripts": {
+        "test": "pest",
+        "format": "pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
