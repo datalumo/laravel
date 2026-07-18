@@ -30,7 +30,8 @@ class InstallCommand extends Command
             $this->line('  DATALUMO_ORG=your-org-public-id');
             $this->line('  DATALUMO_TOKEN=your-org-api-token');
             $this->line('  DATALUMO_SOURCE=docs');
-            $this->line('  DATALUMO_WIDGET={org-public-id}/{widget-public-id}');
+            $this->line('  DATALUMO_SEARCH_WIDGET={org-public-id}/{search-widget-id}');
+            $this->line('  DATALUMO_CHAT_WIDGET={org-public-id}/{chat-widget-id}');
 
             return self::SUCCESS;
         }

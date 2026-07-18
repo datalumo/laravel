@@ -4,6 +4,7 @@ namespace Datalumo\Laravel;
 
 use Datalumo\Laravel\Jobs\MakeSearchable;
 use Datalumo\Laravel\Jobs\RemoveFromSearch;
+use Datalumo\Laravel\Support\WidgetKey;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -64,31 +65,27 @@ trait Searchable
 
     public function datalumoWidget(): string
     {
-        $widget = (string) config('datalumo.widget', '');
-
-        if (str_contains($widget, '/')) {
-            return (string) substr($widget, strrpos($widget, '/') + 1);
-        }
-
-        return $widget;
+        return WidgetKey::publicId(WidgetKey::search());
     }
 
     public function datalumoWidgetKey(): string
     {
-        $widget = (string) config('datalumo.widget', '');
-
-        if (str_contains($widget, '/')) {
-            return $widget;
-        }
-
-        $org = (string) config('datalumo.organisation', '');
-
-        return $org !== '' && $widget !== '' ? $org.'/'.$widget : $widget;
+        return WidgetKey::embedKey(WidgetKey::search());
     }
 
     public function datalumoWidgetPublicId(): string
     {
         return $this->datalumoWidget();
+    }
+
+    public function datalumoChatWidgetKey(): string
+    {
+        return WidgetKey::embedKey(WidgetKey::chat());
+    }
+
+    public function datalumoChatWidgetPublicId(): string
+    {
+        return WidgetKey::publicId(WidgetKey::chat());
     }
 
     public function shouldBeSearchable(): bool

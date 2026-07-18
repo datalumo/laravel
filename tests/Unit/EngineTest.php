@@ -66,7 +66,7 @@ it('maps search hits by external_id identity and drops nulls', function () {
     ));
 
     $client = m::mock(Client::class);
-    $client->shouldReceive('widgets')->with('w_test')->andReturn($widgets);
+    $client->shouldReceive('widgets')->with('w_search')->andReturn($widgets);
 
     $this->app->instance(Client::class, $client);
     $this->app->instance(Engine::class, new Engine($client));

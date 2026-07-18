@@ -1,5 +1,5 @@
 @props([
-    'widget' => config('datalumo.widget'),
+    'widget' => \Datalumo\Laravel\Support\WidgetKey::embedKey(\Datalumo\Laravel\Support\WidgetKey::chat()),
     'baseUrl' => config('datalumo.base_url', 'https://datalumo.app'),
 ])
 

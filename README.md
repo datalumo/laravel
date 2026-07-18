@@ -20,10 +20,13 @@ DATALUMO_BASE_URL=https://datalumo.app
 DATALUMO_ORG=your-org-public-id
 DATALUMO_TOKEN=your-api-token
 DATALUMO_SOURCE=docs
-DATALUMO_WIDGET={org-public-id}/{widget-public-id}
+DATALUMO_SEARCH_WIDGET={org-public-id}/{search-widget-id}
+DATALUMO_CHAT_WIDGET={org-public-id}/{chat-widget-id}
 ```
 
 `DATALUMO_ORG` is the organisation public id, not the slug.
+
+Search and chat are separate widgets in Datalumo (different types). Set both if you use both embeds. You can still pass a `widget` prop to a component to override the default.
 
 Optional check:
 
@@ -64,6 +67,8 @@ php artisan datalumo:import "App\Models\Article"
 
 ## Search
 
+Server-side search uses `DATALUMO_SEARCH_WIDGET`:
+
 ```php
 $articles = Article::datalumoSearch('how to deploy')->get();
 ```
@@ -73,6 +78,10 @@ $articles = Article::datalumoSearch('how to deploy')->get();
 ```blade
 <x-datalumo::search />
 <x-datalumo::chat />
+
+{{-- Override when needed --}}
+<x-datalumo::search widget="org/other-search-widget" />
+<x-datalumo::chat widget="org/other-chat-widget" />
 
 @stack('datalumo-scripts')
 ```
