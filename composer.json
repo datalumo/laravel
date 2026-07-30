@@ -18,20 +18,20 @@
     "require": {
         "php": "^8.2",
         "datalumo/php": "dev-main",
-        "illuminate/bus": "^11.0|^12.0",
-        "illuminate/console": "^11.0|^12.0",
-        "illuminate/contracts": "^11.0|^12.0",
-        "illuminate/database": "^11.0|^12.0",
-        "illuminate/queue": "^11.0|^12.0",
-        "illuminate/support": "^11.0|^12.0",
-        "illuminate/view": "^11.0|^12.0",
+        "illuminate/bus": "^11.0|^12.0|^13.0",
+        "illuminate/console": "^11.0|^12.0|^13.0",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/queue": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "illuminate/view": "^11.0|^12.0|^13.0",
         "spatie/laravel-package-tools": "^1.16"
     },
     "require-dev": {
         "laravel/pint": "^1.18",
-        "orchestra/testbench": "^9.0|^10.0",
-        "pestphp/pest": "^3.0",
-        "pestphp/pest-plugin-laravel": "^3.0"
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "pestphp/pest": "^3.0|^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0|^4.1"
     },
     "autoload": {
         "psr-4": {

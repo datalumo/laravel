@@ -15,7 +15,13 @@ trait Searchable
 {
     public static function bootSearchable(): void
     {
-        static::observe(ModelObserver::class);
+        $registerObserver = fn () => static::observe(ModelObserver::class);
+
+        if (method_exists(static::class, 'whenBooted')) {
+            static::whenBooted($registerObserver);
+        } else {
+            $registerObserver();
+        }
 
         if (! EloquentCollection::hasMacro('searchable')) {
             EloquentCollection::macro('searchable', function () {
