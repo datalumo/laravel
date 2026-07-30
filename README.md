@@ -11,7 +11,7 @@ composer require datalumo/laravel
 php artisan vendor:publish --tag=datalumo-config
 ```
 
-Requires PHP 8.2+ and Laravel 11 or 12.
+Requires PHP 8.2+ and Laravel 11, 12, or 13. Laravel 13 requires PHP 8.3+.
 
 ## Configure
 
