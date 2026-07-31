@@ -8,9 +8,10 @@
     $scriptBase = rtrim($baseUrl, '/');
 @endphp
 
+{{-- Bubble mounts to document.body; this node is only a mount hook for attributes. --}}
 <div {{ $attributes->merge(['data-datalumo-chat' => $key]) }}></div>
 
-@once
+@once('datalumo-widget-script')
     @push('datalumo-scripts')
         <script src="{{ $scriptBase }}/widget/v1/datalumo.js" defer></script>
     @endpush
@@ -20,7 +21,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (window.Datalumo && typeof window.Datalumo.chat === 'function') {
-                window.Datalumo.chat(@js($key)).mount('[data-datalumo-chat="@js($key)"]');
+                window.Datalumo.chat(@js($key)).mount();
             }
         });
     </script>
